@@ -9229,7 +9229,7 @@ async function handlePullRequest(data) {
   let branch = data.head.ref;
   // let cardsNumbers = getAllCardNumbers(message, branch);
   let cardsNumbers = getAllCardNumbers(message, message);
-  let trelloBoardId = getBoardId(branch);
+  let trelloBoardId = getBoardId(message);
   cardsNumbers.forEach(async cardNumber => {
   let card = await getCardOnBoard(trelloBoardId, cardNumber);
     if (card && card.length > 0) {
