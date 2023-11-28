@@ -25,8 +25,14 @@ const trelloListNamePullRequestClosed = core.getInput('trello-list-name-pr-close
 function getCardNumbers(message) {
   console.log(`getCardNumber(${message})`);
   console.log(`Trello ID match pattern ${trelloCardIdPattern}`)
-  let ids = message && message.length > 0 ? message.replace(regexPullRequest, "").match(new RegExp(`${trelloCardIdPattern}([^\\s]+)`, 'g')) : [];
-  return ids && ids.length > 0 ? ids.map(x => x.replace(trelloCardIdPattern, '')) : null;
+  let ids = message && message.length > 0 ? message.replace(regexPullRequest, "").match(new RegExp(`cid=([^\\s]+)`, 'g')) : [];
+  return ids && ids.length > 0 ? ids.map(x => x.replace("cid=", '')) : null;
+}
+
+function getBoardId(message) {
+    console.log(`getCardId(${message})`);
+    let ids = message && message.length > 0 ? message.match(new RegExp(`bid=([^\\s]+)`, 'g')) : [];
+    return ids && ids.length > 0 ? ids.map(x => x.replace("bid=", '')) : null;
 }
 
 function getAllCardNumbers(message, branch) {
@@ -154,12 +160,12 @@ async function handlePullRequest(data) {
   console.log("handlePullRequest", data);
   let url = data.html_url || data.url;
   let message = data.title;
-  let user = data.user.name;
+  let user = data.user.login || data.user.name;
   let branch = data.head.ref;
   // let cardsNumbers = getAllCardNumbers(message, branch);
   let cardsNumbers = getAllCardNumbers(message, message);
+  let trelloBoardId = getBoardId(branch);
   cardsNumbers.forEach(async cardNumber => {
-
   let card = await getCardOnBoard(trelloBoardId, cardNumber);
     if (card && card.length > 0) {
       if (trelloCardAction && trelloCardAction.toLowerCase() == 'attachment') {
@@ -168,12 +174,12 @@ async function handlePullRequest(data) {
       else if (trelloCardAction && trelloCardAction.toLowerCase() == 'comment') {
         await addCommentToCard(card, user, message, url);
       }
-      if (data.state == "open" && trelloListNamePullRequestOpen && trelloListNamePullRequestOpen.length > 0) {
-        await moveCardToList(trelloBoardId, card, trelloListNamePullRequestOpen);
-      }
-      else if (data.state == "closed" && trelloListNamePullRequestClosed && trelloListNamePullRequestClosed.length > 0) {
-        await moveCardToList(trelloBoardId, card, trelloListNamePullRequestClosed);
-      }
+      // if (data.state == "open" && trelloListNamePullRequestOpen && trelloListNamePullRequestOpen.length > 0) {
+      //   await moveCardToList(trelloBoardId, card, trelloListNamePullRequestOpen);
+      // }
+      // else if (data.state == "closed" && trelloListNamePullRequestClosed && trelloListNamePullRequestClosed.length > 0) {
+      //   await moveCardToList(trelloBoardId, card, trelloListNamePullRequestClosed);
+      // }
     }
   });
 }
