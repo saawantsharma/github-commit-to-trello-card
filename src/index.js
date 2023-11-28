@@ -5,6 +5,8 @@ import * as github from '@actions/github';
 const { context = {} } = github;
 const { pull_request, head_commit } = context.payload;
 
+console.log('test ************************************************************************************* test')
+
 const regexPullRequest = /Merge pull request \#\d+ from/g;
 const trelloCardIdPattern = core.getInput('trello-card-id-pattern', { required: false }) || '#';
 const trelloApiKey = core.getInput('trello-api-key', { required: true });
@@ -14,6 +16,8 @@ const trelloCardAction = core.getInput('trello-card-action', { required: true })
 const trelloListNameCommit = core.getInput('trello-list-name-commit', { required: true });
 const trelloListNamePullRequestOpen = core.getInput('trello-list-name-pr-open', { required: false });
 const trelloListNamePullRequestClosed = core.getInput('trello-list-name-pr-closed', { required: false });
+
+
 
 function getCardNumbers(message) {
   console.log(`getCardNumber(${message})`);
