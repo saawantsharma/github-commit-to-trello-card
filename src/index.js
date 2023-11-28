@@ -156,7 +156,8 @@ async function handlePullRequest(data) {
   let message = data.title;
   let user = data.user.name;
   let branch = data.head.ref;
-  let cardsNumbers = getAllCardNumbers(message, branch);
+  // let cardsNumbers = getAllCardNumbers(message, branch);
+  let cardsNumbers = getAllCardNumbers(message, message);
   cardsNumbers.forEach(async cardNumber => {
 
   let card = await getCardOnBoard(trelloBoardId, cardNumber);
